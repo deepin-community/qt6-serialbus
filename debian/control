@@ -1,0 +1,87 @@
+Source: qt6-serialbus
+Section: libs
+Priority: optional
+Maintainer: Deepin Developer <deepin-dev@deepin.org>
+Uploaders: Deepin Packages Builder <packages@deepin.org>
+Build-Depends: cmake (>= 3.18~),
+               dh-exec,
+               debhelper-compat (= 13),
+               libgl-dev,
+               libqt6opengl6-dev (>= 6.2.4~),
+               libqt6serialport6-dev (>= 6.2.4~),
+               libvulkan-dev [linux-any],
+               linux-libc-dev [linux-any],
+               ninja-build,
+               pkg-config,
+               pkg-kde-tools,
+               qt6-base-dev (>= 6.2.4~),
+               qt6-base-private-dev (>= 6.2.4~),
+Standards-Version: 4.6.0
+Homepage: https://www.qt.io/developers/
+Rules-Requires-Root: no
+
+Package: libqt6serialbus6
+Architecture: any
+Multi-Arch: same
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Qt 6 Serial Bus library
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ The Qt 6 Serial Bus module provides the Qt module for general purpose
+ serial bus access, support for CAN and potentially other
+ serial buses.
+ .
+ This package contains the shared library for Qt 6 Serial Bus.
+
+Package: libqt6serialbus6-bin
+Architecture: linux-any
+Section: utils
+Multi-Arch: foreign
+Pre-Depends: ${misc:Pre-Depends}
+Depends: ${misc:Depends}, ${shlibs:Depends}
+Description: Qt 6 Serial Bus helper binaries
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ The Qt 6 Serial Bus module provides the Qt module for general purpose
+ serial bus access, support for CAN and potentially other
+ serial buses.
+ .
+ This package contains helper binaries for the Qt 6 Serial Bus module.
+
+Package: libqt6serialbus6-plugins
+Architecture: any
+Multi-Arch: same
+Pre-Depends: ${misc:Pre-Depends}
+Depends: libqt6serialbus6 (= ${binary:Version}),
+         ${misc:Depends},
+         ${shlibs:Depends},
+Description: Qt 6 Serial Bus plugins
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ The Qt 6 Serial Bus module provides the Qt module for general purpose
+ serial bus access, support for CAN and potentially other
+ serial buses.
+ .
+ This package contains plugins for Qt 6 Serial Bus.
+
+Package: libqt6serialbus6-dev
+Section: libdevel
+Architecture: any
+Multi-Arch: same
+Depends: libqt6serialbus6 (= ${binary:Version}),
+         libqt6serialbus6-plugins (= ${binary:Version}),
+         qt6-base-dev,
+         ${misc:Depends},
+Description: Qt 6 Serial Bus development files
+ Qt is a cross-platform C++ application framework. Qt's primary feature
+ is its rich set of widgets that provide standard GUI functionality.
+ .
+ The Qt 6 Serial Bus module provides the Qt module for general purpose
+ serial bus access, support for CAN and potentially other
+ serial buses.
+ .
+ This package contains the header development files used for building Qt 6
+ applications using qtserialbus.
