@@ -1,6 +1,9 @@
-# SymbolsHelper-Confirmed: 6.2.1 amd64
+# SymbolsHelper-Confirmed: 6.4.1 amd64
 libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
 * Build-Depends-Package: libqt6serialbus6-dev
+ _ZN10QModbusPduD0Ev@Base 6.4.0
+ _ZN10QModbusPduD1Ev@Base 6.4.0
+ _ZN10QModbusPduD2Ev@Base 6.4.0
  _ZN12QModbusReply11qt_metacallEN11QMetaObject4CallEiPPv@Base 6.2.1
  _ZN12QModbusReply11qt_metacastEPKc@Base 6.2.1
  _ZN12QModbusReply11setFinishedEb@Base 6.2.1
@@ -102,9 +105,15 @@ libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
  _ZN14QModbusRequest15minimumDataSizeERKS_@Base 6.2.1
  _ZN14QModbusRequest17calculateDataSizeERKS_@Base 6.2.1
  _ZN14QModbusRequest26registerDataSizeCalculatorEN10QModbusPdu12FunctionCodeEPFiRKS_E@Base 6.2.1
+ _ZN14QModbusRequestD0Ev@Base 6.4.0
+ _ZN14QModbusRequestD1Ev@Base 6.4.0
+ _ZN14QModbusRequestD2Ev@Base 6.4.0
  _ZN15QModbusResponse15minimumDataSizeERKS_@Base 6.2.1
  _ZN15QModbusResponse17calculateDataSizeERKS_@Base 6.2.1
  _ZN15QModbusResponse26registerDataSizeCalculatorEN10QModbusPdu12FunctionCodeEPFiRKS_E@Base 6.2.1
+ _ZN15QModbusResponseD0Ev@Base 6.4.0
+ _ZN15QModbusResponseD1Ev@Base 6.4.0
+ _ZN15QModbusResponseD2Ev@Base 6.4.0
  _ZN16QModbusTcpClient11qt_metacallEN11QMetaObject4CallEiPPv@Base 6.2.1
  _ZN16QModbusTcpClient11qt_metacastEPKc@Base 6.2.1
  _ZN16QModbusTcpClient16staticMetaObjectE@Base 6.2.1
@@ -167,6 +176,9 @@ libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
  _ZN22QModbusRtuSerialServerD0Ev@Base 6.2.1
  _ZN22QModbusRtuSerialServerD1Ev@Base 6.2.1
  _ZN22QModbusRtuSerialServerD2Ev@Base 6.2.1
+ _ZN24QModbusExceptionResponseD0Ev@Base 6.4.0
+ _ZN24QModbusExceptionResponseD1Ev@Base 6.4.0
+ _ZN24QModbusExceptionResponseD2Ev@Base 6.4.0
  _ZN27QModbusDeviceIdentification13fromByteArrayERK10QByteArray@Base 6.2.1
  _ZN28QModbusTcpConnectionObserverD0Ev@Base 6.2.1
  _ZN28QModbusTcpConnectionObserverD1Ev@Base 6.2.1
@@ -233,58 +245,58 @@ libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
  _ZNK7QCanBus12createDeviceERK7QStringS2_PS0_@Base 6.2.1
  _ZNK7QCanBus16availableDevicesERK7QStringPS0_@Base 6.2.1
  _ZNK7QCanBus7pluginsEv@Base 6.2.1
- (optional=templinst)_ZNSt8_Rb_treeIiSt4pairIKi10QByteArrayESt10_Select1stIS3_ESt4lessIiESaIS3_EE16_M_insert_uniqueIS3_EES0_ISt17_Rb_tree_iteratorIS3_EbEOT_@Base 6.2.1
+ _ZTI10QModbusPdu@Base 6.4.0
  _ZTI12QModbusReply@Base 6.2.1
  _ZTI13QCanBusDevice@Base 6.2.1
  _ZTI13QModbusClient@Base 6.2.1
  _ZTI13QModbusDevice@Base 6.2.1
  _ZTI13QModbusServer@Base 6.2.1
  _ZTI14QCanBusFactory@Base 6.2.1
+ _ZTI14QModbusRequest@Base 6.4.0
+ _ZTI15QModbusResponse@Base 6.4.0
  _ZTI16QModbusTcpClient@Base 6.2.1
  _ZTI16QModbusTcpServer@Base 6.2.1
  _ZTI22QModbusRtuSerialClient@Base 6.2.1
  _ZTI22QModbusRtuSerialServer@Base 6.2.1
+ _ZTI24QModbusExceptionResponse@Base 6.4.0
  _ZTI28QModbusTcpConnectionObserver@Base 6.2.1
  _ZTI7QCanBus@Base 6.2.1
+ _ZTS10QModbusPdu@Base 6.4.0
  _ZTS12QModbusReply@Base 6.2.1
  _ZTS13QCanBusDevice@Base 6.2.1
  _ZTS13QModbusClient@Base 6.2.1
  _ZTS13QModbusDevice@Base 6.2.1
  _ZTS13QModbusServer@Base 6.2.1
  _ZTS14QCanBusFactory@Base 6.2.1
+ _ZTS14QModbusRequest@Base 6.4.0
+ _ZTS15QModbusResponse@Base 6.4.0
  _ZTS16QModbusTcpClient@Base 6.2.1
  _ZTS16QModbusTcpServer@Base 6.2.1
  _ZTS22QModbusRtuSerialClient@Base 6.2.1
  _ZTS22QModbusRtuSerialServer@Base 6.2.1
+ _ZTS24QModbusExceptionResponse@Base 6.4.0
  _ZTS28QModbusTcpConnectionObserver@Base 6.2.1
  _ZTS7QCanBus@Base 6.2.1
+ _ZTV10QModbusPdu@Base 6.4.0
  _ZTV12QModbusReply@Base 6.2.1
  _ZTV13QCanBusDevice@Base 6.2.1
  _ZTV13QModbusClient@Base 6.2.1
  _ZTV13QModbusDevice@Base 6.2.1
  _ZTV13QModbusServer@Base 6.2.1
  _ZTV14QCanBusFactory@Base 6.2.1
+ _ZTV14QModbusRequest@Base 6.4.0
+ _ZTV15QModbusResponse@Base 6.4.0
  _ZTV16QModbusTcpClient@Base 6.2.1
  _ZTV16QModbusTcpServer@Base 6.2.1
  _ZTV22QModbusRtuSerialClient@Base 6.2.1
  _ZTV22QModbusRtuSerialServer@Base 6.2.1
+ _ZTV24QModbusExceptionResponse@Base 6.4.0
  _ZTV28QModbusTcpConnectionObserver@Base 6.2.1
  _ZTV7QCanBus@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIhE10getCopyCtrEvENUlPKNS_18QMetaTypeInterfaceEPvPKvE_4_FUNES4_S5_S7_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIhE10getMoveCtrEvENUlPKNS_18QMetaTypeInterfaceEPvS5_E_4_FUNES4_S5_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIhE13getDefaultCtrEvENUlPKNS_18QMetaTypeInterfaceEPvE_4_FUNES4_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIiE10getCopyCtrEvENUlPKNS_18QMetaTypeInterfaceEPvPKvE_4_FUNES4_S5_S7_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIiE10getMoveCtrEvENUlPKNS_18QMetaTypeInterfaceEPvS5_E_4_FUNES4_S5_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIiE13getDefaultCtrEvENUlPKNS_18QMetaTypeInterfaceEPvE_4_FUNES4_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeItE10getCopyCtrEvENUlPKNS_18QMetaTypeInterfaceEPvPKvE_4_FUNES4_S5_S7_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeItE10getMoveCtrEvENUlPKNS_18QMetaTypeInterfaceEPvS5_E_4_FUNES4_S5_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeItE13getDefaultCtrEvENUlPKNS_18QMetaTypeInterfaceEPvE_4_FUNES4_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIxE10getCopyCtrEvENUlPKNS_18QMetaTypeInterfaceEPvPKvE_4_FUNES4_S5_S7_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIxE10getMoveCtrEvENUlPKNS_18QMetaTypeInterfaceEPvS5_E_4_FUNES4_S5_S5_@Base 6.2.1
- (optional=templinst)_ZZN9QtPrivate16QMetaTypeForTypeIxE13getDefaultCtrEvENUlPKNS_18QMetaTypeInterfaceEPvE_4_FUNES4_S5_@Base 6.2.1
  _Zls6QDebugRK10QModbusPdu@Base 6.2.1
  _ZlsR11QDataStreamRK10QModbusPdu@Base 6.2.1
  _ZlsR11QDataStreamRK12QCanBusFrame@Base 6.2.1
  _ZrsR11QDataStreamR12QCanBusFrame@Base 6.2.1
  _ZrsR11QDataStreamR14QModbusRequest@Base 6.2.1
  _ZrsR11QDataStreamR15QModbusResponse@Base 6.2.1
+ _ZrsR11QDataStreamRN10QModbusPdu12FunctionCodeE@Base 6.4.0

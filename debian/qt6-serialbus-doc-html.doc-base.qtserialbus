@@ -1,0 +1,9 @@
+Document: qt6-serialbus-manual
+Title: Qt 6 serial bus
+Author: The Qt Company Ltd
+Abstract: This is the HTML documentation for Qt 6 serial bus
+Section: Programming/C++
+
+Format: HTML
+Index: /usr/share/doc/qt6-serialbus-doc-html/html/qtserialbus/qtserialbus-index.html
+Files: /usr/share/doc/qt6-serialbus-doc-html/html/qtserialbus/*.html

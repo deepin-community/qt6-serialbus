@@ -25,12 +25,13 @@ qt_internal_add_module(SerialBus
         qtserialbusglobal.h
     LIBRARIES
         Qt::CorePrivate
-        Qt::Network
     PUBLIC_LIBRARIES
         Qt::Core
+        Qt::Network  # TODO: QTBUG-86533 workaround, Qt::Network should be moved to LIBRARIES
     PRIVATE_MODULE_INTERFACE
         Qt::CorePrivate
         Qt::Network
+    GENERATE_CPP_EXPORTS
 )
 
 ## Scopes:

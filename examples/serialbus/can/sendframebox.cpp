@@ -1,57 +1,38 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 Andre Hartmann <aha_1980@gmx.de>
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the QtSerialBus module.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 Andre Hartmann <aha_1980@gmx.de>
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 #include "sendframebox.h"
 #include "ui_sendframebox.h"
 
-constexpr char THREE_DIGITS[] = "[[:xdigit:]]{3}";
+using namespace Qt::StringLiterals;
+
+static const QRegularExpression &threeHexDigitsPattern()
+{
+    static const QRegularExpression result(u"[[:xdigit:]]{3}"_s);
+    Q_ASSERT(result.isValid());
+    return result;
+}
+
+static const QRegularExpression &oneDigitAndSpacePattern()
+{
+    static const QRegularExpression result(u"((\\s+)|^)([[:xdigit:]]{1})(\\s+)"_s);
+    Q_ASSERT(result.isValid());
+    return result;
+}
+
+const QRegularExpression &hexNumberPattern()
+{
+    static const QRegularExpression result(u"^[[:xdigit:]]*$"_s);
+    Q_ASSERT(result.isValid());
+    return result;
+}
+
+const QRegularExpression &twoSpacesPattern()
+{
+    static const QRegularExpression result(u"([\\s]{2})"_s);
+    Q_ASSERT(result.isValid());
+    return result;
+}
 
 enum {
     MaxStandardId = 0x7FF,
@@ -63,35 +44,27 @@ enum {
     MaxPayloadFd = 64
 };
 
-bool isEvenHex(QString input)
+static bool isEvenHex(QString input)
 {
-    const QChar space = QLatin1Char(' ');
-    input.remove(space);
-
-    if (input.size() % 2)
-        return false;
-
-    return true;
+    input.remove(u' ');
+    return (input.size() % 2) == 0;
 }
 
 // Formats a string of hex characters with a space between every byte
 // Example: "012345" -> "01 23 45"
 static QString formatHexData(const QString &input)
 {
-    const QChar space = QLatin1Char(' ');
     QString out = input;
 
-    const QRegularExpression threeDigits(THREE_DIGITS);
-    const QRegularExpression oneDigitAndSpace(QStringLiteral("((\\s+)|^)([[:xdigit:]]{1})(\\s+)"));
-
-    while (oneDigitAndSpace.match(out).hasMatch() || threeDigits.match(out).hasMatch()) {
-        if (threeDigits.match(out).hasMatch()) {
-            const QRegularExpressionMatch match = threeDigits.match(out);
-            out.insert(match.capturedEnd() - 1, space);
-        } else if (oneDigitAndSpace.match(out).hasMatch()) {
-            const QRegularExpressionMatch match = oneDigitAndSpace.match(out);
-            if (out.at(match.capturedEnd() - 1) == space)
-                out.remove(match.capturedEnd() - 1, 1);
+    while (true) {
+        if (auto match = threeHexDigitsPattern().match(out); match.hasMatch()) {
+            out.insert(match.capturedEnd() - 1, u' ');
+        } else if (match = oneDigitAndSpacePattern().match(out); match.hasMatch()) {
+            const auto pos = match.capturedEnd() - 1;
+            if (out.at(pos) == u' ')
+                out.remove(pos, 1);
+        } else {
+            break;
         }
     }
 
@@ -106,16 +79,11 @@ HexIntegerValidator::HexIntegerValidator(QObject *parent) :
 
 QValidator::State HexIntegerValidator::validate(QString &input, int &) const
 {
-    bool ok;
-    uint value = input.toUInt(&ok, 16);
-
     if (input.isEmpty())
         return Intermediate;
-
-    if (!ok || value > m_maximum)
-        return Invalid;
-
-    return Acceptable;
+    bool ok;
+    uint value = input.toUInt(&ok, 16);
+    return ok && value <= m_maximum ? Acceptable : Invalid;
 }
 
 void HexIntegerValidator::setMaximum(uint maximum)
@@ -132,29 +100,46 @@ HexStringValidator::HexStringValidator(QObject *parent) :
 QValidator::State HexStringValidator::validate(QString &input, int &pos) const
 {
     const int maxSize = 2 * m_maxLength;
-    const QChar space = QLatin1Char(' ');
     QString data = input;
-    data.remove(space);
+
+    data.remove(u' ');
 
     if (data.isEmpty())
         return Intermediate;
 
-    // limit maximum size and forbid trailing spaces
-    if ((data.size() > maxSize) || (data.size() == maxSize && input.endsWith(space)))
+    // limit maximum size
+    if (data.size() > maxSize)
         return Invalid;
 
     // check if all input is valid
-    const QRegularExpression re(QStringLiteral("^[[:xdigit:]]*$"));
-    if (!re.match(data).hasMatch())
+    if (!hexNumberPattern().match(data).hasMatch())
         return Invalid;
 
-    // insert a space after every two hex nibbles
-    const QRegularExpression threeDigits(THREE_DIGITS);
+    // don't allow user to enter more than one space
+    if (const auto match = twoSpacesPattern().match(input); match.hasMatch()) {
+        input.replace(match.capturedStart(), 2, ' ');
+        pos = match.capturedEnd() - 1;
+    }
 
-    while (threeDigits.match(input).hasMatch()) {
-        const QRegularExpressionMatch match = threeDigits.match(input);
-        input.insert(match.capturedEnd() - 1, space);
-        pos = match.capturedEnd() + 1;
+    // insert a space after every two hex nibbles
+    while (true) {
+        const QRegularExpressionMatch match = threeHexDigitsPattern().match(input);
+        if (!match.hasMatch())
+            break;
+        const auto start = match.capturedStart();
+        const auto end = match.capturedEnd();
+        if (pos == start + 1) {
+            // add one hex nibble before two - Abc
+            input.insert(pos, u' ');
+        } else if (pos == start + 2) {
+            // add hex nibble in the middle - aBc
+            input.insert(end - 1, u' ');
+            pos = end;
+        } else {
+            // add one hex nibble after two - abC
+            input.insert(end - 1, u' ');
+            pos = end + 1;
+        }
     }
 
     return Acceptable;
@@ -226,7 +211,7 @@ SendFrameBox::SendFrameBox(QWidget *parent) :
         const uint frameId = m_ui->frameIdEdit->text().toUInt(nullptr, 16);
         QString data = m_ui->payloadEdit->text();
         m_ui->payloadEdit->setText(formatHexData(data));
-        const QByteArray payload = QByteArray::fromHex(data.remove(QLatin1Char(' ')).toLatin1());
+        const QByteArray payload = QByteArray::fromHex(data.remove(u' ').toLatin1());
 
         QCanBusFrame frame = QCanBusFrame(frameId, payload);
         frame.setExtendedFrameFormat(m_ui->extendedFormatBox->isChecked());
