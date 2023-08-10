@@ -1,4 +1,10 @@
 #!/usr/bin/dh-exec
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginAdditionalTargetInfo.cmake
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfig.cmake
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfigVersion.cmake
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfigVersionImpl.cmake
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginTargets-none.cmake
+[linux-any] usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginTargets.cmake
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/QCanBus
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/QCanBusDevice
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/QCanBusDeviceInfo
@@ -41,6 +47,7 @@ usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qmodbustcpclient.h
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qmodbustcpserver.h
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qserialbusglobal.h
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qtserialbus-config.h
+usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qtserialbusexports.h
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qtserialbusglobal.h
 usr/include/${DEB_HOST_MULTIARCH}/qt6/QtSerialBus/qtserialbusversion.h
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6BuildInternals/StandaloneTests/QtSerialBusTestsConfig.cmake
@@ -61,15 +68,10 @@ usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusConfig.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusConfigVersion.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusConfigVersionImpl.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusDependencies.cmake
+usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusPlugins.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusTargets-none.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusTargets.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SerialBusVersionlessTargets.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginAdditionalTargetInfo.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfig.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfigVersion.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginConfigVersionImpl.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginTargets-none.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6SocketCanBusPluginTargets.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6TinyCanBusPluginAdditionalTargetInfo.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6TinyCanBusPluginConfig.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6TinyCanBusPluginConfigVersion.cmake
@@ -82,16 +84,9 @@ usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6VirtualCanBusPluginConfigVer
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6VirtualCanBusPluginConfigVersionImpl.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6VirtualCanBusPluginTargets-none.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBus/Qt6VirtualCanBusPluginTargets.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsAdditionalTargetInfo.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsConfig.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsConfigVersion.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsConfigVersionImpl.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsDependencies.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsTargets-none.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsTargets.cmake
-usr/lib/${DEB_HOST_MULTIARCH}/cmake/Qt6SerialBusTools/Qt6SerialBusToolsVersionlessTargets.cmake
 usr/lib/${DEB_HOST_MULTIARCH}/libQt6SerialBus.prl
 usr/lib/${DEB_HOST_MULTIARCH}/libQt6SerialBus.so
 usr/lib/${DEB_HOST_MULTIARCH}/metatypes/qt6serialbus_none_metatypes.json
+usr/lib/${DEB_HOST_MULTIARCH}/pkgconfig/Qt6SerialBus.pc
 usr/lib/${DEB_HOST_MULTIARCH}/qt6/mkspecs/modules/qt_lib_serialbus.pri
 usr/share/qt6/modules/SerialBus.json

@@ -1,38 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the QtSerialBus module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL3$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
-** packaging of this file. Please review the following information to
-** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 #ifndef QMODBUSPDU_H
 #define QMODBUSPDU_H
 
@@ -44,7 +11,7 @@
 
 QT_BEGIN_NAMESPACE
 
-class QModbusPdu
+class Q_SERIALBUS_EXPORT QModbusPdu
 {
 public:
     enum ExceptionCode {
@@ -86,7 +53,7 @@ public:
     };
 
     QModbusPdu() = default;
-    virtual ~QModbusPdu() = default;
+    virtual ~QModbusPdu();
 
     bool isValid() const {
         return (m_code >= ReadCoils && m_code < UndefinedFunctionCode)
@@ -160,7 +127,7 @@ private:
     {
         static_assert(is_pod<T>::value, "Only POD types supported.");
         static_assert(IsType<T, quint8, quint16>::value, "Only quint8 and quint16 supported.");
-        for (int i = 0; i < vector.count(); ++i)
+        for (int i = 0; i < vector.size(); ++i)
             (*stream) << vector[i];
     }
 
@@ -190,8 +157,9 @@ private:
 };
 Q_SERIALBUS_EXPORT QDebug operator<<(QDebug debug, const QModbusPdu &pdu);
 Q_SERIALBUS_EXPORT QDataStream &operator<<(QDataStream &stream, const QModbusPdu &pdu);
+Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbusPdu::FunctionCode &code);
 
-class QModbusRequest : public QModbusPdu
+class Q_SERIALBUS_EXPORT QModbusRequest : public QModbusPdu
 {
 public:
     QModbusRequest() = default;
@@ -202,12 +170,13 @@ public:
     explicit QModbusRequest(FunctionCode code, const QByteArray &newData = QByteArray())
         : QModbusPdu(code, newData)
     {}
+    ~QModbusRequest() override;
 
-    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbusRequest &pdu);
-    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbusRequest &pdu);
+    static int minimumDataSize(const QModbusRequest &pdu);
+    static int calculateDataSize(const QModbusRequest &pdu);
 
     using CalcFuncPtr = decltype(&calculateDataSize);
-    Q_SERIALBUS_EXPORT static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
+    static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
 
     template <typename ... Args>
     QModbusRequest(FunctionCode code, Args ... newData)
@@ -218,7 +187,7 @@ Q_SERIALBUS_EXPORT QDataStream &operator>>(QDataStream &stream, QModbusRequest &
 inline QDataStream &operator<<(QDataStream &stream, const QModbusRequest &pdu)
 { return stream << static_cast<const QModbusPdu &>(pdu); }
 
-class QModbusResponse : public QModbusPdu
+class Q_SERIALBUS_EXPORT QModbusResponse : public QModbusPdu
 {
 public:
     QModbusResponse() = default;
@@ -229,12 +198,13 @@ public:
     explicit QModbusResponse(FunctionCode code, const QByteArray &newData = QByteArray())
         : QModbusPdu(code, newData)
     {}
+    ~QModbusResponse() override;
 
-    Q_SERIALBUS_EXPORT static int minimumDataSize(const QModbusResponse &pdu);
-    Q_SERIALBUS_EXPORT static int calculateDataSize(const QModbusResponse &pdu);
+    static int minimumDataSize(const QModbusResponse &pdu);
+    static int calculateDataSize(const QModbusResponse &pdu);
 
     using CalcFuncPtr = decltype(&calculateDataSize);
-    Q_SERIALBUS_EXPORT static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
+    static void registerDataSizeCalculator(FunctionCode fc, CalcFuncPtr func);
 
     template <typename ... Args>
     QModbusResponse(FunctionCode code, Args ... newData)
@@ -242,7 +212,7 @@ public:
     {}
 };
 
-class QModbusExceptionResponse : public QModbusResponse
+class Q_SERIALBUS_EXPORT QModbusExceptionResponse : public QModbusResponse
 {
 public:
     QModbusExceptionResponse() = default;
@@ -252,6 +222,7 @@ public:
     QModbusExceptionResponse(FunctionCode fc, ExceptionCode ec)
         : QModbusResponse(FunctionCode(quint8(fc) | ExceptionByte), static_cast<quint8> (ec))
     {}
+    ~QModbusExceptionResponse() override;
 
     void setFunctionCode(FunctionCode c) override {
         QModbusPdu::setFunctionCode(FunctionCode(quint8(c) | ExceptionByte));

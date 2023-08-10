@@ -1,52 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the QtSerialBus module.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
@@ -58,6 +11,8 @@
 #include <QStandardItemModel>
 #include <QStatusBar>
 #include <QUrl>
+
+using namespace Qt::StringLiterals;
 
 enum ModbusConnection {
     Serial,
@@ -98,11 +53,11 @@ MainWindow::MainWindow(QWidget *parent)
     ui->connectType->setEnabled(false);
 #endif
 
-    auto model = new QStandardItemModel(10, 1, this);
-    for (int i = 0; i < 10; ++i)
-        model->setItem(i, new QStandardItem(QStringLiteral("%1").arg(i + 1)));
+    auto *model = new QStandardItemModel(0, 1, this);
+    for (int i = 1; i <= 10; ++i)
+        model->appendRow(new QStandardItem(QString::number(i)));
     ui->writeSize->setModel(model);
-    ui->writeSize->setCurrentText("10");
+    ui->writeSize->setCurrentText(u"10"_s);
     connect(ui->writeSize, &QComboBox::currentTextChanged,
             writeModel, &WriteRegisterModel::setNumberOfValues);
 
@@ -199,28 +154,29 @@ void MainWindow::onConnectButtonClicked()
 
     statusBar()->clearMessage();
     if (modbusDevice->state() != QModbusDevice::ConnectedState) {
+        const auto settings = m_settingsDialog->settings();
         if (static_cast<ModbusConnection>(ui->connectType->currentIndex()) == Serial) {
             modbusDevice->setConnectionParameter(QModbusDevice::SerialPortNameParameter,
                 ui->portEdit->text());
 #if QT_CONFIG(modbus_serialport)
             modbusDevice->setConnectionParameter(QModbusDevice::SerialParityParameter,
-                m_settingsDialog->settings().parity);
+                settings.parity);
             modbusDevice->setConnectionParameter(QModbusDevice::SerialBaudRateParameter,
-                m_settingsDialog->settings().baud);
+                settings.baud);
             modbusDevice->setConnectionParameter(QModbusDevice::SerialDataBitsParameter,
-                m_settingsDialog->settings().dataBits);
+                settings.dataBits);
             modbusDevice->setConnectionParameter(QModbusDevice::SerialStopBitsParameter,
-                m_settingsDialog->settings().stopBits);
+                settings.stopBits);
 #endif
         } else {
             const QUrl url = QUrl::fromUserInput(ui->portEdit->text());
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkPortParameter, url.port());
             modbusDevice->setConnectionParameter(QModbusDevice::NetworkAddressParameter, url.host());
         }
-        modbusDevice->setTimeout(m_settingsDialog->settings().responseTime);
-        modbusDevice->setNumberOfRetries(m_settingsDialog->settings().numberOfRetries);
+        modbusDevice->setTimeout(settings.responseTime);
+        modbusDevice->setNumberOfRetries(settings.numberOfRetries);
         if (!modbusDevice->connectDevice()) {
-            statusBar()->showMessage(tr("Connect failed: ") + modbusDevice->errorString(), 5000);
+            statusBar()->showMessage(tr("Connect failed: %1").arg(modbusDevice->errorString()), 5000);
         } else {
             ui->actionConnect->setEnabled(false);
             ui->actionDisconnect->setEnabled(true);
@@ -257,7 +213,7 @@ void MainWindow::onReadButtonClicked()
         else
             delete reply; // broadcast replies return immediately
     } else {
-        statusBar()->showMessage(tr("Read error: ") + modbusDevice->errorString(), 5000);
+        statusBar()->showMessage(tr("Read error: %1").arg(modbusDevice->errorString()), 5000);
     }
 }
 
@@ -297,22 +253,24 @@ void MainWindow::onWriteButtonClicked()
     QModbusDataUnit writeUnit = writeRequest();
     QModbusDataUnit::RegisterType table = writeUnit.registerType();
     for (qsizetype i = 0, total = writeUnit.valueCount(); i < total; ++i) {
+        const auto addr = i + writeUnit.startAddress();
         if (table == QModbusDataUnit::Coils)
-            writeUnit.setValue(i, writeModel->m_coils[i + writeUnit.startAddress()]);
+            writeUnit.setValue(i, writeModel->m_coils[addr]);
         else
-            writeUnit.setValue(i, writeModel->m_holdingRegisters[i + writeUnit.startAddress()]);
+            writeUnit.setValue(i, writeModel->m_holdingRegisters[addr]);
     }
 
     if (auto *reply = modbusDevice->sendWriteRequest(writeUnit, ui->serverEdit->value())) {
         if (!reply->isFinished()) {
             connect(reply, &QModbusReply::finished, this, [this, reply]() {
-                if (reply->error() == QModbusDevice::ProtocolError) {
+                const auto error = reply->error();
+                if (error == QModbusDevice::ProtocolError) {
                     statusBar()->showMessage(tr("Write response error: %1 (Modbus exception: 0x%2)")
                         .arg(reply->errorString()).arg(reply->rawResult().exceptionCode(), -1, 16),
                         5000);
-                } else if (reply->error() != QModbusDevice::NoError) {
+                } else if (error != QModbusDevice::NoError) {
                     statusBar()->showMessage(tr("Write response error: %1 (code: 0x%2)").
-                        arg(reply->errorString()).arg(reply->error(), -1, 16), 5000);
+                        arg(reply->errorString()).arg(error, -1, 16), 5000);
                 }
                 reply->deleteLater();
             });
@@ -321,7 +279,7 @@ void MainWindow::onWriteButtonClicked()
             reply->deleteLater();
         }
     } else {
-        statusBar()->showMessage(tr("Write error: ") + modbusDevice->errorString(), 5000);
+        statusBar()->showMessage(tr("Write error: %1").arg(modbusDevice->errorString()), 5000);
     }
 }
 
@@ -335,10 +293,11 @@ void MainWindow::onReadWriteButtonClicked()
     QModbusDataUnit writeUnit = writeRequest();
     QModbusDataUnit::RegisterType table = writeUnit.registerType();
     for (qsizetype i = 0, total = writeUnit.valueCount(); i < total; ++i) {
+        const auto addr = i + writeUnit.startAddress();
         if (table == QModbusDataUnit::Coils)
-            writeUnit.setValue(i, writeModel->m_coils[i + writeUnit.startAddress()]);
+            writeUnit.setValue(i, writeModel->m_coils[addr]);
         else
-            writeUnit.setValue(i, writeModel->m_holdingRegisters[i + writeUnit.startAddress()]);
+            writeUnit.setValue(i, writeModel->m_holdingRegisters[addr]);
     }
 
     if (auto *reply = modbusDevice->sendReadWriteRequest(readRequest(), writeUnit,
@@ -348,7 +307,7 @@ void MainWindow::onReadWriteButtonClicked()
         else
             delete reply; // broadcast replies return immediately
     } else {
-        statusBar()->showMessage(tr("Read error: ") + modbusDevice->errorString(), 5000);
+        statusBar()->showMessage(tr("Read error: %1").arg(modbusDevice->errorString()), 5000);
     }
 }
 
@@ -368,26 +327,26 @@ void MainWindow::onWriteTableChanged(int index)
 
 QModbusDataUnit MainWindow::readRequest() const
 {
-    const auto table =
-        static_cast<QModbusDataUnit::RegisterType>(ui->writeTable->currentData().toInt());
+    const auto table = ui->writeTable->currentData().value<QModbusDataUnit::RegisterType>();
 
     int startAddress = ui->readAddress->value();
     Q_ASSERT(startAddress >= 0 && startAddress < 10);
 
     // do not go beyond 10 entries
-    quint16 numberOfEntries = qMin(ui->readSize->currentText().toUShort(), quint16(10 - startAddress));
+    quint16 numberOfEntries = qMin(ui->readSize->currentText().toUShort(),
+                                   quint16(10 - startAddress));
     return QModbusDataUnit(table, startAddress, numberOfEntries);
 }
 
 QModbusDataUnit MainWindow::writeRequest() const
 {
-    const auto table =
-        static_cast<QModbusDataUnit::RegisterType>(ui->writeTable->currentData().toInt());
+    const auto table = ui->writeTable->currentData().value<QModbusDataUnit::RegisterType>();
 
     int startAddress = ui->writeAddress->value();
     Q_ASSERT(startAddress >= 0 && startAddress < 10);
 
     // do not go beyond 10 entries
-    quint16 numberOfEntries = qMin(ui->writeSize->currentText().toUShort(), quint16(10 - startAddress));
+    quint16 numberOfEntries = qMin(ui->writeSize->currentText().toUShort(),
+                                   quint16(10 - startAddress));
     return QModbusDataUnit(table, startAddress, numberOfEntries);
 }

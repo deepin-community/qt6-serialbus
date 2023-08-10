@@ -1,38 +1,5 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: http://www.qt.io/licensing/
-**
-** This file is part of the QtSerialBus module of the Qt Toolkit.
-**
-** $QT_BEGIN_LICENSE:LGPL3$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see http://www.qt.io/terms-conditions. For further
-** information use the contact form at http://www.qt.io/contact-us.
-**
-** GNU Lesser General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU Lesser
-** General Public License version 3 as published by the Free Software
-** Foundation and appearing in the file LICENSE.LGPLv3 included in the
-** packaging of this file. Please review the following information to
-** ensure the GNU Lesser General Public License version 3 requirements
-** will be met: https://www.gnu.org/licenses/lgpl.html.
-**
-** GNU General Public License Usage
-** Alternatively, this file may be used under the terms of the GNU
-** General Public License version 2.0 or later as published by the Free
-** Software Foundation and appearing in the file LICENSE.GPL included in
-** the packaging of this file. Please review the following information to
-** ensure the GNU General Public License version 2.0 requirements will be
-** met: http://www.gnu.org/licenses/gpl-2.0.html.
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
 
 #include <QtSerialBus/qmodbusserver.h>
 #if QT_CONFIG(modbus_serialport)
@@ -910,9 +877,9 @@ private slots:
         QCOMPARE(server.data(registerType, 1, &data), validDataUnit);
         if (validDataUnit) {
             QCOMPARE(data, quint16(444));
-            QTRY_COMPARE(writtenSpy.count(), 1);
+            QTRY_COMPARE(writtenSpy.size(), 1);
             QList<QVariant> signalData = writtenSpy.at(0);
-            QCOMPARE(signalData.count(), 3);
+            QCOMPARE(signalData.size(), 3);
             QCOMPARE(signalData.at(0).value<QModbusDataUnit::RegisterType>(), registerType);
             QCOMPARE(signalData.at(1).toInt(), 1);
             QCOMPARE(signalData.at(2).toInt(), 1);
@@ -943,7 +910,7 @@ private slots:
         const QList<quint16> zeroVector = { 0, 0, 0, 0, 0 };
         QModbusDataUnit rangeUnit(registerType, 7, valueVector);
         QCOMPARE(rangeUnit.valueCount(), 5);
-        QCOMPARE(rangeUnit.values().count(), 5);
+        QCOMPARE(rangeUnit.values().size(), 5);
         QCOMPARE(rangeUnit.startAddress(), 7);
         QVERIFY(rangeUnit.values() == valueVector);
         QVERIFY(rangeUnit.registerType() == registerType);
@@ -958,9 +925,9 @@ private slots:
                 QCOMPARE(readData, valueVector.at(i-rangeUnit.startAddress()));
             }
 
-            QTRY_COMPARE(writtenSpy.count(), 1);
+            QTRY_COMPARE(writtenSpy.size(), 1);
             QList<QVariant> signalData = writtenSpy.at(0);
-            QCOMPARE(signalData.count(), 3);
+            QCOMPARE(signalData.size(), 3);
             QCOMPARE(signalData.at(0).value<QModbusDataUnit::RegisterType>(), registerType);
             QCOMPARE(signalData.at(1).toInt(), rangeUnit.startAddress());
             QCOMPARE(signalData.at(2).toInt(), rangeUnit.valueCount());
@@ -974,7 +941,7 @@ private slots:
         //never fits anywhere
         QModbusDataUnit oversizeUnit(registerType, 0, MAP_RANGE*2);
         QCOMPARE(oversizeUnit.valueCount(), MAP_RANGE*2);
-        QCOMPARE(oversizeUnit.values().count(), MAP_RANGE*2);
+        QCOMPARE(oversizeUnit.values().size(), MAP_RANGE*2);
         QCOMPARE(oversizeUnit.startAddress(), 0);
         QCOMPARE(oversizeUnit.registerType(), registerType);
 
@@ -1004,7 +971,7 @@ private slots:
         //testing server.data(QModbusDataUnit *)
         QModbusDataUnit requestUnit(registerType, 7, 5);
         QCOMPARE(requestUnit.valueCount(), 5);
-        QCOMPARE(requestUnit.values().count(), 5);
+        QCOMPARE(requestUnit.values().size(), 5);
         QCOMPARE(requestUnit.startAddress(), 7);
         QVERIFY(requestUnit.registerType() == registerType);
         QVERIFY(requestUnit.values() != valueVector);
@@ -1013,7 +980,7 @@ private slots:
         if (validDataUnit) {
             QVERIFY(requestUnit.values() == valueVector);
             QCOMPARE(requestUnit.valueCount(), 5);
-            QCOMPARE(requestUnit.values().count(), 5);
+            QCOMPARE(requestUnit.values().size(), 5);
             QCOMPARE(requestUnit.startAddress(), 7);
         }
 
@@ -1031,7 +998,7 @@ private slots:
         QVERIFY(server.data(&requestUnit) == validDataUnit);
         if (validDataUnit) {
             QCOMPARE(requestUnit.valueCount(), MAP_RANGE);
-            QCOMPARE(requestUnit.values().count(), MAP_RANGE);
+            QCOMPARE(requestUnit.values().size(), MAP_RANGE);
         }
 
         oversizeUnit.setStartAddress(0);
@@ -1045,7 +1012,7 @@ private slots:
         QVERIFY(server.data(&oversizeUnit) == validDataUnit);
         if (validDataUnit) {
             QCOMPARE(oversizeUnit.valueCount(), MAP_RANGE);
-            QCOMPARE(oversizeUnit.values().count(), MAP_RANGE);
+            QCOMPARE(oversizeUnit.values().size(), MAP_RANGE);
         }
     }
 

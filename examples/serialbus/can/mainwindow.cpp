@@ -1,55 +1,9 @@
-/****************************************************************************
-**
-** Copyright (C) 2017 The Qt Company Ltd.
-** Contact: https://www.qt.io/licensing/
-**
-** This file is part of the examples of the QtSerialBus module.
-**
-** $QT_BEGIN_LICENSE:BSD$
-** Commercial License Usage
-** Licensees holding valid commercial Qt licenses may use this file in
-** accordance with the commercial license agreement provided with the
-** Software or, alternatively, in accordance with the terms contained in
-** a written agreement between you and The Qt Company. For licensing terms
-** and conditions see https://www.qt.io/terms-conditions. For further
-** information use the contact form at https://www.qt.io/contact-us.
-**
-** BSD License Usage
-** Alternatively, you may use this file under the terms of the BSD license
-** as follows:
-**
-** "Redistribution and use in source and binary forms, with or without
-** modification, are permitted provided that the following conditions are
-** met:
-**   * Redistributions of source code must retain the above copyright
-**     notice, this list of conditions and the following disclaimer.
-**   * Redistributions in binary form must reproduce the above copyright
-**     notice, this list of conditions and the following disclaimer in
-**     the documentation and/or other materials provided with the
-**     distribution.
-**   * Neither the name of The Qt Company Ltd nor the names of its
-**     contributors may be used to endorse or promote products derived
-**     from this software without specific prior written permission.
-**
-**
-** THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
-** "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
-** LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
-** A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
-** OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
-** SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
-** LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
-** DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
-** THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
-** (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
-** OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE."
-**
-** $QT_END_LICENSE$
-**
-****************************************************************************/
+// Copyright (C) 2017 The Qt Company Ltd.
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR BSD-3-Clause
 
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
+#include "canbusdeviceinfodialog.h"
 #include "connectdialog.h"
 #include "receivedframesmodel.h"
 
@@ -60,6 +14,8 @@
 #include <QDesktopServices>
 #include <QLabel>
 #include <QTimer>
+
+using namespace Qt::StringLiterals;
 
 MainWindow::MainWindow(QWidget *parent) :
     QMainWindow(parent),
@@ -101,6 +57,7 @@ MainWindow::~MainWindow()
 void MainWindow::initActionsConnections()
 {
     m_ui->actionDisconnect->setEnabled(false);
+    m_ui->actionDeviceInformation->setEnabled(false);
     m_ui->sendFrameBox->setEnabled(false);
 
     connect(m_ui->sendFrameBox, &SendFrameBox::sendFrame, this, &MainWindow::sendFrame);
@@ -117,7 +74,12 @@ void MainWindow::initActionsConnections()
     connect(m_ui->actionAboutQt, &QAction::triggered, qApp, &QApplication::aboutQt);
     connect(m_ui->actionClearLog, &QAction::triggered, m_model, &ReceivedFramesModel::clear);
     connect(m_ui->actionPluginDocumentation, &QAction::triggered, this, []() {
-        QDesktopServices::openUrl(QUrl("http://doc.qt.io/qt-5/qtcanbus-backends.html#can-bus-plugins"));
+        QDesktopServices::openUrl(QUrl("http://doc.qt.io/qt-6/qtcanbus-backends.html#can-bus-plugins"));
+    });
+    connect(m_ui->actionDeviceInformation, &QAction::triggered, this, [this]() {
+        auto info = m_canDevice->deviceInfo();
+        CanBusDeviceInfoDialog dialog(info, this);
+        dialog.exec();
     });
 }
 
@@ -150,7 +112,7 @@ void MainWindow::connectDevice()
                                                         &errorString));
     if (!m_canDevice) {
         m_status->setText(tr("Error creating device '%1', reason: '%2'")
-                          .arg(p.pluginName).arg(errorString));
+                          .arg(p.pluginName, errorString));
         return;
     }
 
@@ -175,6 +137,7 @@ void MainWindow::connectDevice()
     } else {
         m_ui->actionConnect->setEnabled(false);
         m_ui->actionDisconnect->setEnabled(true);
+        m_ui->actionDeviceInformation->setEnabled(true);
 
         m_ui->sendFrameBox->setEnabled(true);
 
@@ -186,16 +149,16 @@ void MainWindow::connectDevice()
                     m_canDevice->configurationParameter(QCanBusDevice::DataBitRateKey);
             if (isCanFd && dataBitRate.isValid()) {
                 m_status->setText(tr("Plugin: %1, connected to %2 at %3 / %4 kBit/s")
-                                  .arg(p.pluginName).arg(p.deviceInterfaceName)
+                                  .arg(p.pluginName, p.deviceInterfaceName)
                                   .arg(bitRate.toInt() / 1000).arg(dataBitRate.toInt() / 1000));
             } else {
                 m_status->setText(tr("Plugin: %1, connected to %2 at %3 kBit/s")
-                                  .arg(p.pluginName).arg(p.deviceInterfaceName)
+                                  .arg(p.pluginName, p.deviceInterfaceName)
                                   .arg(bitRate.toInt() / 1000));
             }
         } else {
             m_status->setText(tr("Plugin: %1, connected to %2")
-                    .arg(p.pluginName).arg(p.deviceInterfaceName));
+                    .arg(p.pluginName, p.deviceInterfaceName));
         }
 
         if (m_canDevice->hasBusStatus())
@@ -243,6 +206,7 @@ void MainWindow::disconnectDevice()
 
     m_ui->actionConnect->setEnabled(true);
     m_ui->actionDisconnect->setEnabled(false);
+    m_ui->actionDeviceInformation->setEnabled(false);
 
     m_ui->sendFrameBox->setEnabled(false);
 
@@ -263,14 +227,14 @@ void MainWindow::closeEvent(QCloseEvent *event)
 
 static QString frameFlags(const QCanBusFrame &frame)
 {
-    QString result = QLatin1String(" --- ");
+    QString result = u" --- "_s;
 
     if (frame.hasBitrateSwitch())
-        result[1] = QLatin1Char('B');
+        result[1] = u'B';
     if (frame.hasErrorStateIndicator())
-        result[2] = QLatin1Char('E');
+        result[2] = u'E';
     if (frame.hasLocalEcho())
-        result[3] = QLatin1Char('L');
+        result[3] = u'L';
 
     return result;
 }
@@ -288,11 +252,11 @@ void MainWindow::processReceivedFrames()
         if (frame.frameType() == QCanBusFrame::ErrorFrame)
             data = m_canDevice->interpretErrorFrame(frame);
         else
-            data = QLatin1String(frame.payload().toHex(' ').toUpper());
+            data = QString::fromLatin1(frame.payload().toHex(' ').toUpper());
 
         const QString time = QString::fromLatin1("%1.%2  ")
-                .arg(frame.timeStamp().seconds(), 10, 10, QLatin1Char(' '))
-                .arg(frame.timeStamp().microSeconds() / 100, 4, 10, QLatin1Char('0'));
+                .arg(frame.timeStamp().seconds(), 10, 10, ' '_L1)
+                .arg(frame.timeStamp().microSeconds() / 100, 4, 10, '0'_L1);
 
         const QString flags = frameFlags(frame);
 
