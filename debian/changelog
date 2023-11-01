@@ -1,3 +1,14 @@
+qt6-serialbus (6.6.0-1) experimental; urgency=medium
+
+  [ Patrick Franz ]
+  * New upstream release (6.6.0).
+  * Bump Qt B-Ds to 6.6.0.
+  * Update list of installed files.
+  * Update symbols from buildlogs.
+  * Update d/copyright.
+
+ -- Patrick Franz <deltaone@debian.org>  Fri, 27 Oct 2023 19:50:21 +0200
+
 qt6-serialbus (6.4.2-4) unstable; urgency=medium
 
   * Team upload to unstable.
