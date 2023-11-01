@@ -10,7 +10,7 @@ Copyright: 2015-2021 The Qt Company Ltd.
 License: LGPL-3 or GPL-2+
 
 Files: debian/*
-Copyright: 2021 Patrick Franz <deltaone@debian.org>
+Copyright: 2021-2023 Patrick Franz <deltaone@debian.org>
            2021 Lu YaNing <dluyaning@gmail.com>
 License: LGPL-3 or GPL-2+
 
@@ -23,10 +23,6 @@ License: BSD-3-clause
 Files: tests/manual/modbus/adueditor/*
 Copyright: 2017-2021 The Qt Company Ltd.
 License: BSD-3-clause
-
-Files: conanfile.py
-Copyright: 2021 The Qt Company Ltd.
-License: GPL-3 with Qt-1.0 exception
 
 Files: examples/serialbus/modbus/client/doc/src/modbusclient.qdoc
        examples/serialbus/modbus/server/doc/src/modbusserver.qdoc
