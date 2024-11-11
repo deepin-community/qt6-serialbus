@@ -1,5 +1,5 @@
 // Copyright (C) 2017 The Qt Company Ltd.
-// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR LGPL-3.0-only OR GPL-2.0-only OR GPL-3.0-only
+// SPDX-License-Identifier: LicenseRef-Qt-Commercial OR GPL-3.0-only
 
 #include <QtSerialBus/qcanbus.h>
 #include <QtSerialBus/qcanbusfactory.h>
@@ -17,6 +17,7 @@ private slots:
     void initTestCase();
     void plugins();
     void interfaces();
+    void allInterfaces();
     void createDevice();
 
 private:
@@ -61,6 +62,28 @@ void tst_QCanBus::interfaces()
     QCOMPARE(pluginList.at(0).name(), QStringLiteral("can0"));
     QVERIFY(pluginList.at(0).isVirtual());
     QVERIFY(pluginList.at(0).hasFlexibleDataRate());
+}
+
+void tst_QCanBus::allInterfaces()
+{
+    bool testCanFound = false;
+    bool virtualCanFound = false;
+    const QList<QCanBusDeviceInfo> infoList = bus->availableDevices();
+    QVERIFY(!infoList.isEmpty());
+    for (const QCanBusDeviceInfo &info : infoList) {
+        if (info.plugin() == QStringLiteral("testcan")) {
+            testCanFound = true;
+            QCOMPARE(info.name(), QStringLiteral("can0"));
+            QVERIFY(info.isVirtual());
+            QVERIFY(info.hasFlexibleDataRate());
+        } else if (info.plugin() == QStringLiteral("virtualcan")) {
+            virtualCanFound = true;
+            QVERIFY(info.isVirtual());
+            QVERIFY(info.hasFlexibleDataRate());
+        }
+    }
+    QVERIFY(testCanFound);
+    QVERIFY(virtualCanFound);
 }
 
 void tst_QCanBus::createDevice()

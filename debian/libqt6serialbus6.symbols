@@ -248,12 +248,6 @@ libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
  _ZN24QModbusExceptionResponseD2Ev@Qt_6 6.6.0
  _ZN27QModbusDeviceIdentification13fromByteArrayERK10QByteArray@Qt_6 6.6.0
  _ZN28QCanSignalDescriptionPrivate3getERK21QCanSignalDescription@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI28QCanSignalDescriptionPrivateED1Ev@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI28QCanSignalDescriptionPrivateED2Ev@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI29QCanMessageDescriptionPrivateED1Ev@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI29QCanMessageDescriptionPrivateED2Ev@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI30QCanUniqueIdDescriptionPrivateED1Ev@Qt_6_PRIVATE_API 6.6.0
- (optional=templinst)_ZN28QExplicitlySharedDataPointerI30QCanUniqueIdDescriptionPrivateED2Ev@Qt_6_PRIVATE_API 6.6.0
  _ZN28QModbusTcpConnectionObserverD0Ev@Qt_6 6.6.0
  _ZN28QModbusTcpConnectionObserverD1Ev@Qt_6 6.6.0
  _ZN28QModbusTcpConnectionObserverD2Ev@Qt_6 6.6.0
@@ -366,7 +360,6 @@ libQt6SerialBus.so.6 libqt6serialbus6 #MINVER#
  _ZNK7QCanBus12createDeviceERK7QStringS2_PS0_@Qt_6 6.6.0
  _ZNK7QCanBus16availableDevicesERK7QStringPS0_@Qt_6 6.6.0
  _ZNK7QCanBus7pluginsEv@Qt_6 6.6.0
- _ZSt19piecewise_construct@Qt_6 6.6.0
  _ZTI10QModbusPdu@Qt_6 6.6.0
  _ZTI12QModbusReply@Qt_6 6.6.0
  _ZTI13QCanBusDevice@Qt_6 6.6.0
